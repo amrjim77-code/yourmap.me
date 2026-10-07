@@ -334,7 +334,11 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
               borderColor: `${themeColor.hex}50`,
             }}
           >
-            <Globe className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" style={{ color: themeColor.hex }} />
+            <img
+              src="/YMlogo.png"
+              alt="yourmap.me"
+              className="w-4 h-4 sm:w-5 sm:h-5 object-contain rounded-full shrink-0"
+            />
             <span
               className="font-extrabold font-mono tracking-tight text-[14px] sm:text-[17px] md:text-[18px]"
               style={{

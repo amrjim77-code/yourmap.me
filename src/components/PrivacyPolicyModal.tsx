@@ -179,9 +179,10 @@ export const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({
 
         {/* Footer Action */}
         <div className="p-4 px-6 border-t border-[#f0f0f0] bg-[#fafafa] flex items-center justify-between">
-          <span className="text-xs text-[#86868b]">
-            yourmap.me · Private by design
-          </span>
+          <div className="flex items-center gap-1.5 text-xs text-[#86868b]">
+            <img src="/YMlogo.png" alt="yourmap.me" className="w-4 h-4 object-contain rounded-full shrink-0" />
+            <span>yourmap.me · Private by design</span>
+          </div>
           <button
             type="button"
             onClick={onClose}

@@ -60,7 +60,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
       <div className="max-w-[1100px] mx-auto text-center space-y-6">
         {/* Apple Pill Tag / Eyebrow */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-[#e0e0e0] bg-[#f5f5f7] text-[13px] text-[#1d1d1f] shadow-2xs font-normal">
-          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: themeColor.hex }} />
+          <img src="/YMlogo.png" alt="yourmap.me" className="w-4 h-4 object-contain rounded-full shrink-0" />
           <span>yourmap.me · Show the world where you work.</span>
         </div>
 

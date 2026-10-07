@@ -22,10 +22,12 @@ export const TopNav: React.FC<TopNavProps> = ({ onScrollToTop }) => {
           }}
           className="flex items-center gap-2 text-white hover:opacity-90 transition-opacity font-semibold"
         >
-          <div className="w-5 h-5 rounded-full bg-white/15 flex items-center justify-center">
-            <Globe className="w-3 h-3 text-white" />
-          </div>
-          <span className="font-semibold tracking-tight text-[13.5px]">yourmap.me</span>
+          <img
+            src="/YMlogo.png"
+            alt="yourmap.me logo"
+            className="w-6 h-6 object-contain rounded-full shadow-xs shrink-0"
+          />
+          <span className="font-bold tracking-tight text-[14px]">yourmap.me</span>
         </a>
 
         {/* Minimal clean tagline */}
