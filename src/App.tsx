@@ -774,14 +774,6 @@ export default function App() {
               <span>Show the world where you work.</span>
             </div>
             <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-[#6e6e73]">
-              <a
-                href="mailto:amrjimweb@gmail.com"
-                className="flex items-center gap-1.5 hover:text-[#0f7af0] font-medium transition-colors"
-                title="Send email to amrjimweb@gmail.com"
-              >
-                <Mail className="w-3.5 h-3.5 text-[#0f7af0]" />
-                <span>amrjimweb@gmail.com</span>
-              </a>
               <button
                 type="button"
                 onClick={() => setIsPrivacyModalOpen(true)}
