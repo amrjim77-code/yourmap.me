@@ -3,7 +3,6 @@
 import { useRef, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DottedMap from "dotted-map";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 
 interface MapProps {

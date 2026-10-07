@@ -31,7 +31,6 @@ import {
   ChevronDown,
   ChevronRight,
   User,
-  Briefcase,
   Layout,
   CheckCircle2,
 } from 'lucide-react';
