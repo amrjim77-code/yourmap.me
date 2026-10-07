@@ -275,7 +275,6 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
               style={{
                 width: `${percentWorld}%`,
                 backgroundColor: themeColor.hex,
-                boxShadow: `0 0 10px ${themeColor.hex}`,
               }}
             />
           </div>
@@ -311,7 +310,7 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
 
           {/* Right: Squircle Badge with Flight / Navigation Icon */}
           <div
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-[14px] border flex items-center justify-center shadow-md shrink-0"
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-[14px] border flex items-center justify-center shrink-0"
             style={{
               backgroundColor: themeColor.subcardBg || '#1c2433',
               borderColor: themeColor.subcardBorder || '#2b374d',
@@ -321,21 +320,18 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
               className="w-5 h-5 -rotate-45"
               style={{
                 color: themeColor.hex,
-                filter: `drop-shadow(0 0 6px ${themeColor.hex}88)`,
               }}
             />
           </div>
         </div>
 
-        {/* Row 3: Bottom Center Watermark Pill (Sleek, Minimal & Brand-Highlighted) */}
+        {/* Row 3: Bottom Center Watermark Pill (Sleek, Minimal & Brand-Highlighted, Artifact-Free) */}
         <div className="flex justify-center pt-2 sm:pt-3">
           <div
-            className="px-4 sm:px-6 py-1.5 sm:py-2.5 rounded-full flex items-center gap-2.5 sm:gap-3 border-[1.5px] shadow-sm transition-all"
+            className="px-4 sm:px-6 py-1.5 sm:py-2.5 rounded-full flex items-center gap-2.5 sm:gap-3 border-[1.5px] transition-all"
             style={{
-              backgroundColor: themeColor.isDark ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255, 255, 255, 0.95)',
-              borderColor: `${themeColor.hex}45`,
-              backdropFilter: 'blur(14px)',
-              boxShadow: `0 4px 18px ${themeColor.hex}22`,
+              backgroundColor: themeColor.isDark ? '#0f172a' : '#ffffff',
+              borderColor: `${themeColor.hex}50`,
             }}
           >
             <Globe className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" style={{ color: themeColor.hex }} />
@@ -343,20 +339,19 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
               className="font-extrabold font-mono tracking-tight text-[14px] sm:text-[17px] md:text-[18px]"
               style={{
                 color: themeColor.hex,
-                textShadow: `0 0 12px ${themeColor.hex}40`,
               }}
             >
               yourmap.me
             </span>
             <span
-              className="text-[12px] sm:text-[15px] opacity-50 font-mono font-bold"
+              className="text-[12px] sm:text-[15px] opacity-40 font-mono font-bold"
               style={{ color: themeColor.textSecondary || '#94a3b8' }}
             >
               ·
             </span>
             <span
               className="text-[12.5px] sm:text-[15px] font-semibold tracking-tight"
-              style={{ color: themeColor.textSecondary || '#94a3b8' }}
+              style={{ color: themeColor.textSecondary || '#64748b' }}
             >
               Show the world where you work.
             </span>

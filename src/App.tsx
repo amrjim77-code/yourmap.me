@@ -252,6 +252,10 @@ export default function App() {
           skipFonts: true,
           cacheBust: true,
           quality: 1,
+          style: {
+            boxShadow: 'none',
+            transform: 'none',
+          },
         });
       } else {
         dataUrl = await htmlToImage.toJpeg(node, {
@@ -260,6 +264,10 @@ export default function App() {
           skipFonts: true,
           cacheBust: true,
           quality: 0.95,
+          style: {
+            boxShadow: 'none',
+            transform: 'none',
+          },
         });
       }
 
