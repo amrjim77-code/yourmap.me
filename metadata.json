@@ -1,0 +1,6 @@
+{
+  "name": "yourmap.me - Showcase Your Global Client Footprint",
+  "description": "Create and export stunning, branded infographics showing client countries worldwide. Built for freelancers, agencies, and global talent.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

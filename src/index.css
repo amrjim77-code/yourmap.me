@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", system-ui, sans-serif;
+    background-color: #f5f5f7;
+    color: #1d1d1f;
+    letter-spacing: -0.015em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Display headlines with signature Apple tight cadence */
+  h1, h2, h3, .font-display {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
+    letter-spacing: -0.022em;
+    font-weight: 600;
+  }
+}
+
+/* Custom styling for SVG map geographies */
+.rsm-geography {
+  transition: fill 0.2s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.2s ease;
+  cursor: pointer;
+  outline: none !important;
+}
+
+.rsm-geography:focus {
+  outline: none !important;
+}
+
+/* Apple light subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
