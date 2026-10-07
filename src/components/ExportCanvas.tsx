@@ -5,6 +5,7 @@ import { Skill } from '../data/skills';
 import { countContinents } from '../data/countries';
 import { ClientMapComponent } from './ClientMapComponent';
 import { SkillMapComponent } from './SkillMapComponent';
+import { BrandLogo } from './BrandLogo';
 import { ActiveTab } from './TopNav';
 
 interface ExportCanvasProps {
@@ -334,10 +335,10 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
               borderColor: `${themeColor.hex}50`,
             }}
           >
-            <img
-              src={themeColor.isDark ? '/YMlogo-white.png' : '/YMlogo-black.png'}
-              alt="yourmap.me"
+            <BrandLogo
+              themeColor={themeColor}
               className="w-4 h-4 sm:w-5 sm:h-5 object-contain shrink-0"
+              alt="yourmap.me"
             />
             <span
               className="font-extrabold font-mono tracking-tight text-[14px] sm:text-[17px] md:text-[18px]"

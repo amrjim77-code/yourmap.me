@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { ArrowDown } from 'lucide-react';
 import { ColorSwatch } from '../data/palette';
 import { Globe } from '@/components/ui/globe';
+import { BrandLogo } from './BrandLogo';
 
 interface LandingHeroProps {
   themeColor: ColorSwatch;
@@ -60,7 +61,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
       <div className="max-w-[1100px] mx-auto text-center space-y-6">
         {/* Apple Pill Tag / Eyebrow */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#e0e0e0] bg-[#f5f5f7] text-[13px] text-[#1d1d1f] shadow-2xs font-normal">
-          <img src="/YMlogo-black.png" alt="yourmap.me" className="w-4 h-4 object-contain shrink-0" />
+          <BrandLogo themeColor={themeColor} className="w-4 h-4 object-contain shrink-0" />
           <span>yourmap.me · Show the world where you work.</span>
         </div>
 
