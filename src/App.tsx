@@ -139,6 +139,10 @@ export default function App() {
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file (PNG, JPG, WebP, etc.).');
+        return;
+      }
       if (file.size > 8 * 1024 * 1024) {
         alert('Please choose an image under 8MB.');
         return;
@@ -259,9 +263,11 @@ export default function App() {
         });
       }
 
-      const filename = `yourmap-client-reach-${(userName || 'export')
+      const safeBaseName = (userName || 'export')
         .toLowerCase()
-        .replace(/\s+/g, '-')}.${format}`;
+        .replace(/[^a-z0-9_-]/g, '-')
+        .replace(/-+/g, '-');
+      const filename = `yourmap-client-reach-${safeBaseName}.${format}`;
 
       saveAs(dataUrl, filename);
 

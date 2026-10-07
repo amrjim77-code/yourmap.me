@@ -1,8 +1,55 @@
+# Dependencies
 node_modules/
+/.pnp
+.pnp.js
+
+# Production builds
 build/
 dist/
-coverage/
-.DS_Store
-*.log
+out/
+
+# Environment and sensitive credential files (Zero database / Zero credentials policy)
 .env*
 !.env.example
+*.local
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+
+# System and OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs and debugging
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor and IDE directories
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary / Cache / Local data
+.cache/
+.temp/
+tmp/
+coverage/
+.eslintcache
+.vercel/
