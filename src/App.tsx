@@ -768,7 +768,7 @@ export default function App() {
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[12px]">
             <div className="flex items-center gap-2">
-              <img src="/YMlogo.png" alt="yourmap.me" className="w-4 h-4 object-contain rounded-full shrink-0" />
+              <img src="/YMlogo-black.png" alt="yourmap.me" className="w-4 h-4 object-contain shrink-0" />
               <span className="font-semibold text-[#1d1d1f]">yourmap.me</span>
               <span>•</span>
               <span>Show the world where you work.</span>

@@ -23,9 +23,9 @@ export const TopNav: React.FC<TopNavProps> = ({ onScrollToTop }) => {
           className="flex items-center gap-2 text-white hover:opacity-90 transition-opacity font-semibold"
         >
           <img
-            src="/YMlogo.png"
+            src="/YMlogo-white.png"
             alt="yourmap.me logo"
-            className="w-6 h-6 object-contain rounded-full shadow-xs shrink-0"
+            className="w-6 h-6 object-contain shrink-0"
           />
           <span className="font-bold tracking-tight text-[14px]">yourmap.me</span>
         </a>

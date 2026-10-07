@@ -180,7 +180,7 @@ export const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({
         {/* Footer Action */}
         <div className="p-4 px-6 border-t border-[#f0f0f0] bg-[#fafafa] flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-xs text-[#86868b]">
-            <img src="/YMlogo.png" alt="yourmap.me" className="w-4 h-4 object-contain rounded-full shrink-0" />
+            <img src="/YMlogo-black.png" alt="yourmap.me" className="w-4 h-4 object-contain shrink-0" />
             <span>yourmap.me · Private by design</span>
           </div>
           <button

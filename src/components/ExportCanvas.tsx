@@ -335,9 +335,9 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
             }}
           >
             <img
-              src="/YMlogo.png"
+              src={themeColor.isDark ? '/YMlogo-white.png' : '/YMlogo-black.png'}
               alt="yourmap.me"
-              className="w-4 h-4 sm:w-5 sm:h-5 object-contain rounded-full shrink-0"
+              className="w-4 h-4 sm:w-5 sm:h-5 object-contain shrink-0"
             />
             <span
               className="font-extrabold font-mono tracking-tight text-[14px] sm:text-[17px] md:text-[18px]"
