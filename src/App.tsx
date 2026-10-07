@@ -42,6 +42,7 @@ import {
 
 export default function App() {
   const canvasRef = useRef<HTMLDivElement>(null);
+  const exportCanvasRef = useRef<HTMLDivElement>(null);
   const studioRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -237,13 +238,15 @@ export default function App() {
   // EXPORT ENGINE: High-res 2x Retina PNG & JPG (2 formats)
   // ========================================================
   const handleExport = async (format: 'png' | 'jpeg') => {
-    if (!canvasRef.current || isExporting) return;
+    const node = exportCanvasRef.current || canvasRef.current;
+    if (!node || isExporting) return;
     setIsExporting(true);
-    setExportNotice(`Preparing high-res 2x Retina ${format.toUpperCase()}...`);
+    setExportNotice(`Preparing studio-grade ${format.toUpperCase()}...`);
 
     try {
-      const node = canvasRef.current;
-      const pixelRatio = 2; // 2x Retina quality
+      // 1.5x pixelRatio on canonical 1200px canvas = 1800 x 1800 (1:1) or 1800 x 2250 (4:5)
+      // Guarantees ultra-crisp, razor-sharp output on all devices (mobile, tablet, desktop)
+      const pixelRatio = 1.5;
 
       let dataUrl = '';
       if (format === 'png') {
@@ -299,14 +302,14 @@ export default function App() {
 
   // Copy to Clipboard (PNG Blob)
   const handleCopyClipboard = async () => {
-    if (!canvasRef.current || isExporting) return;
+    const node = exportCanvasRef.current || canvasRef.current;
+    if (!node || isExporting) return;
     setIsExporting(true);
     setExportNotice('Copying high-resolution graphic to clipboard...');
 
     try {
-      const node = canvasRef.current;
       const blob = await htmlToImage.toBlob(node, {
-        pixelRatio: 2,
+        pixelRatio: 1.5,
         backgroundColor: themeColor.cardBg || '#10141d',
         skipFonts: true,
         cacheBust: true,
@@ -786,6 +789,51 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* ========================================================
+          CANONICAL STUDIO HIGH-RES EXPORT CANVAS (DEVICE-AGNOSTIC)
+          Always rendered at standard 1200px width with desktop typography
+          Guarantees users on mobile, tablet, or desktop get the exact same
+          crisp, professional, full-sized studio poster output
+         ======================================================== */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: 0,
+          height: 0,
+          overflow: 'hidden',
+          zIndex: -9999,
+          pointerEvents: 'none',
+        }}
+        aria-hidden="true"
+      >
+        <div
+          ref={exportCanvasRef}
+          style={{
+            width: '1200px',
+            height: aspectRatio === '4:5' ? '1500px' : '1200px',
+          }}
+        >
+          <ExportCanvas
+            activeTab={activeTab}
+            userName={userName}
+            userTitle={userTitle}
+            avatarUrl={avatarUrl}
+            themeColor={themeColor}
+            selectedCountries={selectedCountries}
+            homeCountry={homeCountry}
+            skills={skills}
+            onToggleCountry={() => {}}
+            aspectRatio={aspectRatio}
+            showLabels={showLabels}
+            countryNamesMap={countryNamesMap}
+            isAnimated={false}
+            isExportMode={true}
+          />
+        </div>
+      </div>
 
       {/* 5. LOCATION MODAL (WHERE ARE YOU WORKING FROM?) */}
       <LocationModal

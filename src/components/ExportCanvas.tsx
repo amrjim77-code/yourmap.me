@@ -25,6 +25,7 @@ interface ExportCanvasProps {
   customSubtitle?: string;
   customCta?: string;
   watermarkText?: string;
+  isExportMode?: boolean;
 }
 
 export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
@@ -44,6 +45,7 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
   customSubtitle,
   customCta,
   watermarkText,
+  isExportMode = false,
 }, ref) => {
   const continentCount = useMemo(() => countContinents(selectedCountries), [selectedCountries]);
 
@@ -81,17 +83,24 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
   const displayTitle = userName.trim() || 'Your Name';
   const displayRole = userTitle.trim();
   const displayCta = customCta || defaultCta;
-  const displayWatermark = watermarkText || 'yourmap.me · Show the world where you work.';
 
-  // Dynamic aspect ratio styles (2 sizes: 4:5 and 1:1)
-  const ratioStyle = aspectRatio === '4:5'
-    ? { aspectRatio: '4 / 5', minHeight: '440px' }
-    : { aspectRatio: '1 / 1', minHeight: '340px' };
+  // Dynamic aspect ratio styles (canonical 1200px in export mode, responsive in view mode)
+  const ratioStyle = isExportMode
+    ? {
+        width: '1200px',
+        height: aspectRatio === '4:5' ? '1500px' : '1200px',
+        minHeight: aspectRatio === '4:5' ? '1500px' : '1200px',
+        aspectRatio: aspectRatio === '4:5' ? '4 / 5' : '1 / 1',
+      }
+    : {
+        aspectRatio: aspectRatio === '4:5' ? '4 / 5' : '1 / 1',
+        width: '100%',
+      };
 
   return (
     <div
       ref={ref}
-      id="exportable-infographic-canvas"
+      id={isExportMode ? 'canonical-export-canvas' : 'exportable-infographic-canvas'}
       style={{
         ...ratioStyle,
         backgroundColor: themeColor.cardBg || '#10141d',
@@ -100,19 +109,27 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
           ? '0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05)'
           : '0 20px 45px -10px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04)',
       }}
-      className={`relative w-full overflow-hidden rounded-[20px] sm:rounded-[30px] border flex flex-col justify-between transition-all duration-300 select-none ${
-        aspectRatio === '4:5' ? 'p-3.5 sm:p-6 sm:py-6' : 'p-3.5 sm:p-8'
+      className={`relative w-full overflow-hidden rounded-[18px] sm:rounded-[28px] md:rounded-[32px] border flex flex-col justify-between transition-all duration-300 select-none ${
+        isExportMode
+          ? (aspectRatio === '4:5' ? 'p-10' : 'p-12')
+          : (aspectRatio === '4:5' ? 'p-3 sm:p-6 sm:py-6' : 'p-3 sm:p-7 md:p-8')
       }`}
     >
       {/* ========================================================
           1. TOP HEADER (SCREENSHOT AESTHETIC WITH CLIENT FOOTPRINT CONCEPT)
          ======================================================== */}
-      <div className="relative z-10 flex items-center justify-between gap-2.5 sm:gap-6 pb-2 sm:pb-3">
+      <div className={`relative z-10 flex items-center justify-between gap-2 sm:gap-5 md:gap-6 ${
+        isExportMode ? 'pb-4' : 'pb-1.5 sm:pb-3'
+      }`}>
         {/* Left: User Avatar + Subtitle + Bold Name + Professional Role */}
-        <div className="flex items-center gap-2.5 sm:gap-4 md:gap-5 min-w-0">
+        <div className={`flex items-center min-w-0 ${
+          isExportMode ? 'gap-5' : 'gap-2.5 sm:gap-4 md:gap-5'
+        }`}>
           {avatarUrl ? (
             <div
-              className="relative w-12 h-12 sm:w-18 sm:h-18 md:w-22 md:h-22 rounded-full overflow-hidden shrink-0 border-2 sm:border-[2.5px] shadow-lg ring-2 ring-black/5"
+              className={`relative rounded-full overflow-hidden shrink-0 border-2 sm:border-[2.5px] shadow-lg ring-2 ring-black/5 ${
+                isExportMode ? 'w-20 h-20' : 'w-9 h-9 sm:w-16 sm:h-16 md:w-20 md:h-20'
+              }`}
               style={{ borderColor: themeColor.subcardBorder || '#2a364d' }}
             >
               <img
@@ -123,39 +140,55 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
             </div>
           ) : (
             <div
-              className="w-12 h-12 sm:w-18 sm:h-18 md:w-22 md:h-22 rounded-full flex items-center justify-center font-bold text-lg sm:text-2xl md:text-3xl shrink-0 border-2 sm:border-[2.5px] shadow-lg ring-2 ring-black/5"
+              className={`rounded-full flex items-center justify-center font-bold shrink-0 border-2 sm:border-[2.5px] shadow-lg ring-2 ring-black/5 ${
+                isExportMode
+                  ? 'w-20 h-20 text-3xl'
+                  : 'w-9 h-9 sm:w-16 sm:h-16 md:w-20 md:h-20 text-sm sm:text-2xl md:text-3xl'
+              }`}
               style={{
                 backgroundColor: themeColor.subcardBg || '#161d2a',
                 borderColor: themeColor.subcardBorder || '#2a364d',
                 color: themeColor.textPrimary || '#ffffff',
               }}
             >
-              {getInitials() || <User className="w-5 h-5 sm:w-8 sm:h-8 md:w-10 md:h-10 opacity-70" />}
+              {getInitials() || <User className={isExportMode ? 'w-10 h-10' : 'w-4 h-4 sm:w-8 sm:h-8 md:w-10 md:h-10 opacity-70'} />}
             </div>
           )}
 
           <div className="flex flex-col justify-center min-w-0">
             <span
-              className="text-[10px] sm:text-[12px] font-mono uppercase tracking-[0.08em] font-medium truncate"
+              className={`font-mono uppercase tracking-[0.08em] font-medium truncate ${
+                isExportMode ? 'text-xs' : 'text-[9px] sm:text-[11px] md:text-xs'
+              }`}
               style={{ color: themeColor.textSecondary || '#94a3b8' }}
             >
               {displaySubtitle}
             </span>
 
             <h1
-              className="text-xl sm:text-3xl md:text-4xl lg:text-[42px] font-extrabold tracking-tight leading-tight truncate mt-0.5"
+              className={`font-extrabold tracking-tight leading-tight truncate mt-0.5 ${
+                isExportMode
+                  ? 'text-4xl'
+                  : 'text-base sm:text-2xl md:text-3xl lg:text-[40px]'
+              }`}
               style={{ color: themeColor.textPrimary || '#ffffff' }}
             >
               {displayTitle}
             </h1>
 
-            {/* Work & Services Showcase (Side-by-side highlighted pills maintaining theme) */}
+            {/* Work & Services Showcase (Side-by-side highlighted pills) */}
             {skills.length > 0 ? (
-              <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 md:gap-2 mt-1 sm:mt-1.5 max-w-[540px]">
+              <div className={`flex flex-wrap items-center mt-1 max-w-[540px] ${
+                isExportMode ? 'gap-2' : 'gap-1 sm:gap-1.5 md:gap-2'
+              }`}>
                 {skills.map(skill => (
                   <span
                     key={skill.id}
-                    className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs md:text-[13px] font-bold px-2 sm:px-2.5 md:px-3 py-0.5 sm:py-1 rounded-full border shadow-xs transition-all whitespace-nowrap"
+                    className={`inline-flex items-center gap-1.5 font-bold rounded-full border shadow-xs transition-all whitespace-nowrap ${
+                      isExportMode
+                        ? 'text-xs px-3 py-1'
+                        : 'text-[9.5px] sm:text-xs md:text-[13px] px-1.5 sm:px-2.5 md:px-3 py-0.5 sm:py-1'
+                    }`}
                     style={{
                       backgroundColor: `${themeColor.hex}1c`,
                       borderColor: `${themeColor.hex}50`,
@@ -176,7 +209,9 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
               </div>
             ) : displayRole ? (
               <p
-                className="text-xs sm:text-sm font-normal truncate mt-0.5"
+                className={`font-normal truncate mt-0.5 ${
+                  isExportMode ? 'text-sm' : 'text-[11px] sm:text-xs md:text-sm'
+                }`}
                 style={{ color: themeColor.textSecondary || '#94a3b8' }}
               >
                 {displayRole}
@@ -185,12 +220,16 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
           </div>
         </div>
 
-        {/* Right: Giant Stylized Counter (Numerator in themeColor + /195 in muted slate) */}
+        {/* Right: Giant Stylized Counter */}
         <div className="flex items-center shrink-0">
           {activeTab === 'client-map' && (
             <div className="flex items-baseline font-mono select-none">
               <span
-                className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight leading-none"
+                className={`font-black tracking-tight leading-none ${
+                  isExportMode
+                    ? 'text-7xl'
+                    : 'text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl'
+                }`}
                 style={{
                   color: themeColor.hex,
                   textShadow: `0 0 35px ${themeColor.hex}45`,
@@ -199,7 +238,11 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
                 {selectedCountries.length}
               </span>
               <span
-                className="text-lg sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight ml-0.5 sm:ml-2 leading-none"
+                className={`font-extrabold tracking-tight ml-0.5 sm:ml-2 leading-none ${
+                  isExportMode
+                    ? 'text-3xl'
+                    : 'text-base sm:text-3xl md:text-4xl lg:text-5xl'
+                }`}
                 style={{ color: themeColor.isDark ? '#64748b' : '#94a3b8' }}
               >
                 /195
@@ -210,7 +253,11 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
           {activeTab === 'skill-map' && (
             <div className="flex items-baseline font-mono select-none">
               <span
-                className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight leading-none"
+                className={`font-black tracking-tight leading-none ${
+                  isExportMode
+                    ? 'text-7xl'
+                    : 'text-3xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl'
+                }`}
                 style={{
                   color: themeColor.hex,
                   textShadow: `0 0 35px ${themeColor.hex}45`,
@@ -218,7 +265,9 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
               >
                 {skills.length}
               </span>
-              <span className="text-[#64748b] text-base sm:text-2xl md:text-3xl font-bold ml-1 sm:ml-2 font-sans">
+              <span className={`font-bold ml-1 sm:ml-2 font-sans text-[#64748b] ${
+                isExportMode ? 'text-2xl' : 'text-sm sm:text-2xl md:text-3xl'
+              }`}>
                 Services
               </span>
             </div>
@@ -227,12 +276,12 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
       </div>
 
       {/* ========================================================
-          2. CANVAS BODY
+          2. CANVAS BODY (THE STAR OF THE POSTER: EXPANSIVE, PROPORTIONAL MAP)
          ======================================================== */}
       <div className={`relative z-10 flex-1 w-full overflow-hidden flex flex-col justify-center ${
-        aspectRatio === '4:5' ? 'my-1 py-1' : 'my-2'
+        isExportMode ? 'my-3' : (aspectRatio === '4:5' ? 'my-0.5 sm:my-1' : 'my-0.5 sm:my-2')
       }`}>
-        {/* VIEW 1: CLIENT MAP (Dark Landmasses, Solid Glowing Selected Countries, Animated Flight Paths) */}
+        {/* VIEW 1: CLIENT MAP */}
         {activeTab === 'client-map' && (
           <div className="w-full h-full flex items-center justify-center relative flex-1">
             <ClientMapComponent
@@ -244,14 +293,15 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
               aspectRatio={aspectRatio}
               showLabels={showLabels}
               countryNamesMap={countryNamesMap}
-              animated={isAnimated}
+              animated={isAnimated && !isExportMode}
+              isExportMode={isExportMode}
             />
           </div>
         )}
 
         {/* VIEW 2: WORK & SERVICES SHOWCASE */}
         {activeTab === 'skill-map' && (
-          <div className="w-full h-full overflow-y-auto py-2">
+          <div className="w-full h-full overflow-y-auto py-1 sm:py-2">
             <SkillMapComponent
               skills={skills}
               themeColor={themeColor}
@@ -264,11 +314,17 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
       {/* ========================================================
           3. BOTTOM SECTION (PROGRESS BAR + STATS ROW + BRAND SQUIRCLE + WATERMARK PILL)
          ======================================================== */}
-      <div className="relative z-10 flex flex-col gap-3 pt-2">
+      <div className={`relative z-10 flex flex-col ${
+        isExportMode
+          ? 'gap-3 pt-3'
+          : 'gap-1.5 sm:gap-2.5 md:gap-3 pt-1 sm:pt-2'
+      }`}>
         {/* Full-Width Progress Bar */}
         <div className="w-full">
           <div
-            className="w-full h-[6px] sm:h-[7px] rounded-full overflow-hidden"
+            className={`w-full rounded-full overflow-hidden ${
+              isExportMode ? 'h-[7px]' : 'h-[4px] sm:h-[6px] md:h-[7px]'
+            }`}
             style={{ backgroundColor: themeColor.trackBg || '#1e2638' }}
           >
             <div
@@ -282,7 +338,9 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
         </div>
 
         {/* Row 1: Primary Client Stats */}
-        <div className="flex items-center justify-between text-xs sm:text-sm">
+        <div className={`flex items-center justify-between ${
+          isExportMode ? 'text-sm' : 'text-[10px] sm:text-xs md:text-sm'
+        }`}>
           {/* Left: % of world covered */}
           <span
             className="font-bold tracking-tight"
@@ -293,7 +351,7 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
 
           {/* Right: Total Continents Covered */}
           <span
-            className="text-[11px] sm:text-xs font-medium font-mono"
+            className="font-medium font-mono"
             style={{ color: themeColor.textSecondary || '#94a3b8' }}
           >
             {continentCount} of 5 Continents Covered
@@ -303,7 +361,9 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
         {/* Row 2: Based in & Countries Served + Squircle Icon Badge */}
         <div className="flex items-center justify-between pt-0.5">
           <span
-            className="text-xs sm:text-base md:text-[17px] font-bold tracking-tight truncate min-w-0 pr-2"
+            className={`font-bold tracking-tight truncate min-w-0 pr-2 ${
+              isExportMode ? 'text-base' : 'text-[11px] sm:text-sm md:text-base lg:text-[17px]'
+            }`}
             style={{ color: themeColor.textPrimary || '#ffffff' }}
           >
             {displayCta}
@@ -311,14 +371,20 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
 
           {/* Right: Squircle Badge with Flight / Navigation Icon */}
           <div
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-[14px] border flex items-center justify-center shrink-0"
+            className={`border flex items-center justify-center shrink-0 ${
+              isExportMode
+                ? 'w-11 h-11 rounded-[14px]'
+                : 'w-7 h-7 sm:w-9 sm:h-9 md:w-11 md:h-11 rounded-[9px] sm:rounded-[12px] md:rounded-[14px]'
+            }`}
             style={{
               backgroundColor: themeColor.subcardBg || '#1c2433',
               borderColor: themeColor.subcardBorder || '#2b374d',
             }}
           >
             <Navigation
-              className="w-5 h-5 -rotate-45"
+              className={`-rotate-45 ${
+                isExportMode ? 'w-5 h-5' : 'w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5'
+              }`}
               style={{
                 color: themeColor.hex,
               }}
@@ -326,10 +392,16 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
           </div>
         </div>
 
-        {/* Row 3: Bottom Center Watermark Pill (Sleek, Minimal & Brand-Highlighted, Artifact-Free) */}
-        <div className="flex justify-center pt-2 sm:pt-3">
+        {/* Row 3: Bottom Center Watermark Pill */}
+        <div className={`flex justify-center ${
+          isExportMode ? 'pt-2' : 'pt-0.5 sm:pt-2'
+        }`}>
           <div
-            className="px-4 sm:px-6 py-1.5 sm:py-2.5 rounded-full flex items-center gap-2.5 sm:gap-3 border-[1.5px] transition-all"
+            className={`rounded-full flex items-center border-[1.5px] transition-all ${
+              isExportMode
+                ? 'px-6 py-2 gap-3'
+                : 'px-2.5 sm:px-5 md:px-6 py-1 sm:py-2 md:py-2.5 gap-1.5 sm:gap-2.5 md:gap-3'
+            }`}
             style={{
               backgroundColor: themeColor.isDark ? '#0f172a' : '#ffffff',
               borderColor: `${themeColor.hex}50`,
@@ -337,11 +409,15 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
           >
             <BrandLogo
               themeColor={themeColor}
-              className="w-4 h-4 sm:w-5 sm:h-5 object-contain shrink-0"
+              className={`object-contain shrink-0 ${
+                isExportMode ? 'w-5 h-5' : 'w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5'
+              }`}
               alt="yourmap.me"
             />
             <span
-              className="font-extrabold font-mono tracking-tight text-[14px] sm:text-[17px] md:text-[18px]"
+              className={`font-extrabold font-mono tracking-tight ${
+                isExportMode ? 'text-[16px]' : 'text-[11px] sm:text-[15px] md:text-[17px]'
+              }`}
               style={{
                 color: themeColor.hex,
               }}
@@ -349,13 +425,17 @@ export const ExportCanvas = forwardRef<HTMLDivElement, ExportCanvasProps>(({
               yourmap.me
             </span>
             <span
-              className="text-[12px] sm:text-[15px] opacity-40 font-mono font-bold"
+              className={`opacity-40 font-mono font-bold ${
+                isExportMode ? 'text-[14px]' : 'text-[9px] sm:text-[13px] md:text-[15px]'
+              }`}
               style={{ color: themeColor.textSecondary || '#94a3b8' }}
             >
               ·
             </span>
             <span
-              className="text-[12.5px] sm:text-[15px] font-semibold tracking-tight"
+              className={`font-semibold tracking-tight whitespace-nowrap ${
+                isExportMode ? 'text-[14px]' : 'text-[10px] sm:text-[13px] md:text-[15px]'
+              }`}
               style={{ color: themeColor.textSecondary || '#64748b' }}
             >
               Show the world where you work.

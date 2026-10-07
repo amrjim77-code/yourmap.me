@@ -20,6 +20,7 @@ interface ClientMapComponentProps {
   showLabels?: boolean;
   countryNamesMap?: Map<string, string>;
   animated?: boolean;
+  isExportMode?: boolean;
 }
 
 const countryCoordinates = countryCoordinatesData as unknown as Record<string, [number, number]>;
@@ -151,6 +152,7 @@ export const ClientMapComponent: React.FC<ClientMapComponentProps> = memo(({
   showLabels = true,
   countryNamesMap,
   animated = false,
+  isExportMode = false,
 }) => {
   // All active countries on map include home base + client countries
   const allActiveCountries = useMemo(() => {
@@ -167,15 +169,14 @@ export const ClientMapComponent: React.FC<ClientMapComponentProps> = memo(({
   // In 4:5 format: expand SVG viewBox height and increase scale to best-fit the portrait poster
   const isFourFive = aspectRatio === '4:5';
   const mapWidth = 800;
-  const mapHeight = isFourFive ? 490 : 400;
-  // Scale 172 in 4:5 gives maximum size while preserving all world boundaries with margin
-  const mapScale = isFourFive ? 172 : compact ? 142 : 158;
-  const mapCenter: [number, number] = isFourFive ? [6.5, 5] : [6.5, 7];
+  const mapHeight = isFourFive ? 460 : 380;
+  // Center slightly north of equator to vertically center populated continents
+  const mapCenter: [number, number] = isFourFive ? [8, 14] : [8, 15];
+  // Generous scale so continents fill the frame with beauty
+  const mapScale = isFourFive ? 176 : compact ? 148 : 166;
 
   return (
-    <div className={`relative w-full h-full flex items-center justify-center select-none overflow-hidden group ${
-      isFourFive ? 'min-h-[280px] sm:min-h-[460px] md:min-h-[520px]' : 'min-h-[220px] sm:min-h-[340px] md:min-h-[380px]'
-    }`}>
+    <div className="relative w-full h-full flex items-center justify-center select-none overflow-hidden group">
       {/* Floating Hover Badge in English */}
       {hoveredCountry && (
         <div
@@ -207,7 +208,7 @@ export const ClientMapComponent: React.FC<ClientMapComponentProps> = memo(({
       {/* Map SVG Canvas - Responsive to container, best-fit without cropping */}
       <div className="w-full h-full flex items-center justify-center">
         <ComposableMap
-          key={`composable-map-${themeColor.id}-${aspectRatio}-${compact ? 'compact' : 'full'}`}
+          key={`composable-map-${themeColor.id}-${aspectRatio}-${compact ? 'compact' : 'full'}-${isExportMode ? 'exp' : 'view'}`}
           projection="geoEqualEarth"
           projectionConfig={{
             scale: mapScale,
@@ -216,6 +217,7 @@ export const ClientMapComponent: React.FC<ClientMapComponentProps> = memo(({
           width={mapWidth}
           height={mapHeight}
           className="w-full h-full object-contain"
+          style={{ maxWidth: '100%', maxHeight: '100%' }}
         >
           <defs>
             {/* Outer Drop Shadow Glow for Selected Countries */}
@@ -404,7 +406,9 @@ export const ClientMapComponent: React.FC<ClientMapComponentProps> = memo(({
                     textAnchor="middle"
                     style={{
                       fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, sans-serif',
-                      fontSize: isFourFive ? '9.5px' : compact ? '8.5px' : '9px',
+                      fontSize: isExportMode
+                        ? (isFourFive ? '10px' : '9.5px')
+                        : (isFourFive ? '9.5px' : compact ? '8.5px' : '9px'),
                       fontWeight: isHome ? 600 : 500,
                       fill: '#ffffff',
                       paintOrder: 'stroke fill',
