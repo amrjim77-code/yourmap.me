@@ -21,6 +21,7 @@ import {
   ShieldCheck,
   Facebook,
   Linkedin,
+  Mail,
 } from 'lucide-react';
 import { TopNav, ActiveTab } from './components/TopNav';
 import { LandingHero } from './components/LandingHero';
@@ -733,6 +734,15 @@ export default function App() {
               <span className="font-bold text-[#1d1d1f]">A M R JIM</span>
               <span>·</span>
               <a
+                href="mailto:amrjimweb@gmail.com"
+                className="text-[#1d1d1f] hover:text-[#0f7af0] font-medium flex items-center gap-1 transition-colors"
+                title="Email: amrjimweb@gmail.com"
+              >
+                <Mail className="w-3.5 h-3.5 text-[#0f7af0]" />
+                <span>amrjimweb@gmail.com</span>
+              </a>
+              <span>·</span>
+              <a
                 href="https://www.facebook.com/share/1FgP4jNFEG/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -763,6 +773,14 @@ export default function App() {
               <span>Show the world where you work.</span>
             </div>
             <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-[#6e6e73]">
+              <a
+                href="mailto:amrjimweb@gmail.com"
+                className="flex items-center gap-1.5 hover:text-[#0f7af0] font-medium transition-colors"
+                title="Send email to amrjimweb@gmail.com"
+              >
+                <Mail className="w-3.5 h-3.5 text-[#0f7af0]" />
+                <span>amrjimweb@gmail.com</span>
+              </a>
               <button
                 type="button"
                 onClick={() => setIsPrivacyModalOpen(true)}

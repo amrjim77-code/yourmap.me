@@ -132,6 +132,7 @@ graph LR
 ## 👨‍💻 Creator & Attribution
 
 Created & designed with care by **A M R JIM**:
+- **Email**: [amrjimweb@gmail.com](mailto:amrjimweb@gmail.com)
 - **LinkedIn**: [al-mahamud-rohit-jim](https://www.linkedin.com/in/al-mahamud-rohit-jim-8027b9275/)
 - **Facebook**: [A M R JIM](https://www.facebook.com/share/1FgP4jNFEG/)
 

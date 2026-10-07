@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ShieldCheck, X, HardDrive, Lock, EyeOff, ExternalLink, Facebook, Linkedin } from 'lucide-react';
+import { ShieldCheck, X, HardDrive, Lock, EyeOff, ExternalLink, Facebook, Linkedin, Mail } from 'lucide-react';
 import { ColorSwatch } from '../data/palette';
 
 interface PrivacyPolicyModalProps {
@@ -141,7 +141,15 @@ export const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({
                   A M R JIM
                 </span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <a
+                  href="mailto:amrjimweb@gmail.com"
+                  className="px-3 py-1.5 rounded-full text-xs font-semibold text-[#1d1d1f] bg-[#e5e5ea] hover:bg-[#d1d1d6] transition-all shadow-xs hover:opacity-95 active:scale-95 flex items-center gap-1.5"
+                  title="Email amrjimweb@gmail.com"
+                >
+                  <Mail className="w-3.5 h-3.5 text-[#0f7af0]" />
+                  <span>Email</span>
+                </a>
                 <a
                   href="https://www.facebook.com/share/1FgP4jNFEG/"
                   target="_blank"
