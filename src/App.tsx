@@ -25,9 +25,10 @@ import {
 } from 'lucide-react';
 import { TopNav, ActiveTab } from './components/TopNav';
 import { LandingHero } from './components/LandingHero';
-import { LeftSidebar } from './components/LeftSidebar';
 import { ExportCanvas } from './components/ExportCanvas';
 import { ExportBar } from './components/ExportBar';
+import { WorkSelectionModal } from './components/WorkSelectionModal';
+import { CountrySelectionModal } from './components/CountrySelectionModal';
 import { LocationModal } from './components/LocationModal';
 import { PrivacyPolicyModal } from './components/PrivacyPolicyModal';
 import { COLOR_SWATCHES, ColorSwatch } from './data/palette';
@@ -50,12 +51,14 @@ export default function App() {
   const initialLocalData = useMemo(() => loadUserLocalData(), []);
 
   // 1. Core State Setup - Glacier & Azure Blue (#0f7af0) default matching reference
-  const [activeTab, setActiveTab] = useState<ActiveTab>('client-map');
+  const activeTab: ActiveTab = 'client-map'; // Main workspace & export are always dedicated to the Map Poster
   const [userName, setUserName] = useState<string>(initialLocalData.userName || '');
   const [userTitle, setUserTitle] = useState<string>(initialLocalData.userTitle || '');
   const [homeCountry, setHomeCountry] = useState<string>(initialLocalData.homeCountry || '');
   const [isLocationModalOpen, setIsLocationModalOpen] = useState<boolean>(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState<boolean>(false);
+  const [isWorkModalOpen, setIsWorkModalOpen] = useState<boolean>(false);
+  const [isCountryModalOpen, setIsCountryModalOpen] = useState<boolean>(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(initialLocalData.avatarUrl || null);
   const [themeColor, setThemeColor] = useState<ColorSwatch>(() => {
     if (initialLocalData.themeId) {
@@ -81,7 +84,6 @@ export default function App() {
   const [aspectRatio, setAspectRatio] = useState<'4:5' | '1:1'>(
     initialLocalData.aspectRatio || '1:1'
   );
-  const [mobileTab, setMobileTab] = useState<'preview' | 'editor'>('preview');
   const [isExporting, setIsExporting] = useState<boolean>(false);
   const [copiedSuccess, setCopiedSuccess] = useState<boolean>(false);
   const [exportNotice, setExportNotice] = useState<string | null>(null);
@@ -367,185 +369,109 @@ export default function App() {
           </div>
         )}
 
-        {/* Mobile View Switcher: Segmented Tabs (Live Poster Preview vs Selection Matrix) */}
-        <div className="lg:hidden w-full mb-3 sticky top-12 z-30 bg-[#f5f5f7]/95 backdrop-blur-md py-1">
-          <div className="grid grid-cols-2 p-1 bg-white border border-[#e0e0e0] rounded-2xl shadow-xs text-xs font-semibold">
-            <button
-              type="button"
-              onClick={() => {
-                setMobileTab('preview');
-                studioRef.current?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className={`py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                mobileTab === 'preview'
-                  ? 'bg-[#1d1d1f] text-white shadow-xs'
-                  : 'text-[#6e6e73] hover:text-[#1d1d1f]'
-              }`}
-            >
-              <Globe className="w-3.5 h-3.5" />
-              <span>Map Poster ({selectedCountries.length})</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setMobileTab('editor');
-                studioRef.current?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className={`py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                mobileTab === 'editor'
-                  ? 'bg-[#1d1d1f] text-white shadow-xs'
-                  : 'text-[#6e6e73] hover:text-[#1d1d1f]'
-              }`}
-            >
-              <Check className="w-3.5 h-3.5" />
-              <span>Select Countries & Work</span>
-            </button>
-          </div>
-        </div>
+        {/* STUDIO WORKSPACE CONTAINER: Prominently centered, dedicated solely to Map Poster */}
+        <div className="w-full max-w-5xl mx-auto flex flex-col gap-3.5">
+          {/* Studio Workspace Toolbar */}
+          <div className="bg-white border border-[#e0e0e0] rounded-[20px] p-3 sm:p-3.5 flex flex-col gap-2.5 shadow-2xs">
+            {/* Row 1: Creator Profile & Modals Triggers */}
+            <div className="p-2 sm:p-2.5 rounded-[14px] bg-[#fbfbfd] border border-[#e5e5ea] flex flex-wrap items-center justify-between gap-2.5">
+              {/* Left: Avatar + Name + Work Selection Button */}
+              <div className="flex flex-wrap items-center gap-2 min-w-0">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handlePhotoUpload}
+                />
 
-        <div className="flex flex-col lg:flex-row items-start gap-5 w-full">
-          {/* LEFT SIDEBAR: Countries & Skills Pill Matrix */}
-          <div className={`w-full lg:w-auto shrink-0 ${mobileTab === 'editor' ? 'block' : 'hidden'} lg:block`}>
-            <LeftSidebar
-              activeTab={activeTab}
-              themeColor={themeColor}
-              selectedCountries={selectedCountries}
-              homeCountry={homeCountry}
-              onOpenLocationModal={() => setIsLocationModalOpen(true)}
-              onToggleCountry={handleToggleCountry}
-              onClearCountries={handleClearCountries}
-              skills={skills}
-              onToggleSkill={handleToggleSkill}
-              onAddCustomSkill={handleAddCustomSkill}
-              onRemoveSkill={handleRemoveSkill}
-              onToggleCoreSkill={handleToggleCoreSkill}
-              onClearSkills={handleClearSkills}
-            />
-
-            {/* Mobile Action to Return to Poster */}
-            <div className="lg:hidden mt-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileTab('preview');
-                  studioRef.current?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="w-full py-2.5 px-4 rounded-xl text-white font-semibold text-xs shadow-sm transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
-                style={{ backgroundColor: themeColor.hex }}
-              >
-                <span>View Live Poster ({selectedCountries.length} countries)</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* RIGHT COLUMN: Controls Bar + Live Canvas + Export Bar */}
-          <div className={`flex-1 min-w-0 ${mobileTab === 'preview' ? 'flex' : 'hidden'} lg:flex flex-col gap-3 w-full`}>
-            {/* Studio Workspace Toolbar: Options placed right above the map */}
-            <div className="bg-white border border-[#e0e0e0] rounded-[20px] p-3 sm:p-3.5 flex flex-col gap-3 shadow-2xs">
-              {/* SECTION 1: SIMPLE, COMPACT CREATOR PROFILE & STARTING BASE */}
-              <div className="p-2 sm:p-2.5 rounded-[14px] bg-[#fbfbfd] border border-[#e5e5ea] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                {/* User Profile Inputs (Avatar + Name + Work Options) */}
-                <div className="flex flex-wrap items-center gap-2 min-w-0">
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handlePhotoUpload}
-                  />
-
-                  {/* Compact Avatar / Photo Uploader */}
-                  <div className="relative group shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border border-[#d1d1d6] flex items-center justify-center bg-white shadow-2xs transition-all hover:scale-105 active:scale-95 cursor-pointer relative"
-                      title={avatarUrl ? 'Change photo' : 'Upload photo'}
-                    >
-                      {avatarUrl ? (
-                        <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" />
-                      ) : (
-                        <div
-                          className="w-full h-full flex items-center justify-center font-bold text-xs text-white"
-                          style={{ backgroundColor: themeColor.hex }}
-                        >
-                          {userName.trim() ? (
-                            userName.trim().slice(0, 2).toUpperCase()
-                          ) : (
-                            <User className="w-3.5 h-3.5 text-white" />
-                          )}
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full text-white text-[9px] font-semibold">
-                        Edit
-                      </div>
-                    </button>
-                    {avatarUrl && (
-                      <button
-                        type="button"
-                        onClick={e => {
-                          e.stopPropagation();
-                          setAvatarUrl(null);
-                        }}
-                        className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-white hover:bg-rose-500 hover:text-white rounded-full text-[#1d1d1f] flex items-center justify-center text-[8px] shadow-2xs cursor-pointer border border-[#d1d1d6]"
-                        title="Remove photo"
-                      >
-                        <X className="w-2 h-2" />
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Simple Minimal Name Input Pill */}
-                  <div className="flex items-center bg-white border border-[#e0e0e0] hover:border-[#b0b0b5] focus-within:border-[#0066cc] rounded-full px-2.5 sm:px-3 py-1.5 shadow-2xs transition-all">
-                    <User className="w-3.5 h-3.5 text-[#86868b] mr-1.5 shrink-0" />
-                    <input
-                      type="text"
-                      value={userName}
-                      onChange={e => setUserName(e.target.value)}
-                      placeholder="Your Name"
-                      className="bg-transparent text-xs sm:text-[13px] font-semibold text-[#1d1d1f] placeholder-[#86868b] focus:outline-none w-24 sm:w-36"
-                    />
-                  </div>
-
-                  {/* Simple, Un-highlighted Work & Services Selector */}
+                {/* Compact Avatar / Photo Uploader */}
+                <div className="relative group shrink-0">
                   <button
                     type="button"
-                    onClick={() => {
-                      setActiveTab('skill-map');
-                      setMobileTab('editor');
-                      studioRef.current?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    className="flex items-center gap-1.5 bg-white hover:bg-[#f5f5f7] border border-[#e0e0e0] hover:border-[#b0b0b5] rounded-full px-2.5 sm:px-3 py-1.5 transition-all shadow-2xs cursor-pointer group text-xs text-[#1d1d1f] max-w-full"
-                    title="Click to select or change what you do"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border border-[#d1d1d6] flex items-center justify-center bg-white shadow-2xs transition-all hover:scale-105 active:scale-95 cursor-pointer relative"
+                    title={avatarUrl ? 'Change photo' : 'Upload photo'}
                   >
-                    <Briefcase className="w-3.5 h-3.5 text-[#6e6e73] shrink-0" />
-
-                    {skills.length > 0 ? (
-                      <div className="flex items-center gap-1">
-                        <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#f2f2f4] text-[#1d1d1f] border border-[#e2e2e7] truncate max-w-[120px] sm:max-w-none">
-                          {skills[0].name}
-                        </span>
-                        {skills.length > 1 && (
-                          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-[#e5e5ea] text-[#6e6e73]">
-                            +{skills.length - 1}
-                          </span>
+                    {avatarUrl ? (
+                      <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" />
+                    ) : (
+                      <div
+                        className="w-full h-full flex items-center justify-center font-bold text-xs text-white"
+                        style={{ backgroundColor: themeColor.hex }}
+                      >
+                        {userName.trim() ? (
+                          userName.trim().slice(0, 2).toUpperCase()
+                        ) : (
+                          <User className="w-3.5 h-3.5 text-white" />
                         )}
                       </div>
-                    ) : (
-                      <span className="text-xs text-[#6e6e73] font-medium">
-                        {userTitle || 'Select Work & Services'}
-                      </span>
                     )}
-
-                    <span className="text-[11px] text-[#86868b] group-hover:text-[#1d1d1f] flex items-center gap-0.5 ml-0.5 shrink-0">
-                      <span className="hidden sm:inline">Select</span>
-                      <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-                    </span>
+                    <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full text-white text-[9px] font-semibold">
+                      Edit
+                    </div>
                   </button>
+                  {avatarUrl && (
+                    <button
+                      type="button"
+                      onClick={e => {
+                        e.stopPropagation();
+                        setAvatarUrl(null);
+                      }}
+                      className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-white hover:bg-rose-500 hover:text-white rounded-full text-[#1d1d1f] flex items-center justify-center text-[8px] shadow-2xs cursor-pointer border border-[#d1d1d6]"
+                      title="Remove photo"
+                    >
+                      <X className="w-2 h-2" />
+                    </button>
+                  )}
                 </div>
 
-                {/* Simple, Compact Working From / Starting Point Button */}
+                {/* Simple Minimal Name Input Pill */}
+                <div className="flex items-center bg-white border border-[#e0e0e0] hover:border-[#b0b0b5] focus-within:border-[#0066cc] rounded-full px-2.5 sm:px-3 py-1.5 shadow-2xs transition-all">
+                  <User className="w-3.5 h-3.5 text-[#86868b] mr-1.5 shrink-0" />
+                  <input
+                    type="text"
+                    value={userName}
+                    onChange={e => setUserName(e.target.value)}
+                    placeholder="Your Name"
+                    className="bg-transparent text-xs sm:text-[13px] font-semibold text-[#1d1d1f] placeholder-[#86868b] focus:outline-none w-24 sm:w-36"
+                  />
+                </div>
+
+                {/* Button Beside Name: Exclusively selects work & services */}
+                <button
+                  type="button"
+                  onClick={() => setIsWorkModalOpen(true)}
+                  className="flex items-center gap-1.5 bg-white hover:bg-[#f5f5f7] border border-[#e0e0e0] hover:border-[#b0b0b5] rounded-full px-2.5 sm:px-3 py-1.5 transition-all shadow-2xs cursor-pointer group text-xs text-[#1d1d1f] max-w-full"
+                  title="Click to select work & services"
+                >
+                  <Briefcase className="w-3.5 h-3.5 text-[#0f7af0] shrink-0" />
+                  {skills.length > 0 ? (
+                    <div className="flex items-center gap-1">
+                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#f2f2f4] text-[#1d1d1f] border border-[#e2e2e7] truncate max-w-[120px] sm:max-w-none">
+                        {skills[0].name}
+                      </span>
+                      {skills.length > 1 && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#e5e5ea] text-[#6e6e73]">
+                          +{skills.length - 1}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-xs text-[#6e6e73] font-medium">
+                      {userTitle || 'Select Work & Services'}
+                    </span>
+                  )}
+                  <span className="text-[11px] text-[#86868b] group-hover:text-[#1d1d1f] flex items-center gap-0.5 ml-0.5 shrink-0">
+                    <span className="hidden sm:inline">Select</span>
+                    <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  </span>
+                </button>
+              </div>
+
+              {/* Right: Working From + Client Countries Button */}
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Working From / Base */}
                 <button
                   type="button"
                   onClick={() => setIsLocationModalOpen(true)}
@@ -561,155 +487,129 @@ export default function App() {
                   </div>
                   <ChevronDown className="w-3 h-3 text-[#86868b] group-hover:text-[#1d1d1f] ml-0.5" />
                 </button>
-              </div>
 
-              {/* SECTION 2: VIEW MODE TABS + THEME SWATCHES + MAP CONTROLS */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-0.5">
-                {/* View Mode Switcher (Tab Buttons) */}
-                <div className="flex items-center self-start bg-[#f5f5f7] p-1 rounded-full border border-[#e0e0e0] text-xs shadow-2xs">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('client-map')}
-                    className={`px-3 py-1.5 rounded-full font-semibold text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
-                      activeTab === 'client-map'
-                        ? 'bg-white text-[#1d1d1f] shadow-xs'
-                        : 'text-[#6e6e73] hover:text-[#1d1d1f]'
-                    }`}
-                  >
-                    <Globe className="w-3.5 h-3.5" />
-                    <span>Client Map</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('skill-map')}
-                    className={`px-3 py-1.5 rounded-full font-semibold text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
-                      activeTab === 'skill-map'
-                        ? 'bg-white text-[#1d1d1f] shadow-xs'
-                        : 'text-[#6e6e73] hover:text-[#1d1d1f]'
-                    }`}
-                  >
-                    <Briefcase className="w-3.5 h-3.5" />
-                    <span>Work & Services</span>
-                  </button>
-                </div>
-
-                {/* Right Controls: Theme Swatches + Map Controls */}
-                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-                  {/* Theme Selector (5 dual-tone swatches) */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-[#86868b]">Theme:</span>
-                    <div className="flex items-center gap-2 bg-[#f5f5f7] px-2.5 sm:px-3 py-1 rounded-full border border-[#e0e0e0]">
-                      {COLOR_SWATCHES.map(swatch => {
-                        const isSelected = themeColor.id === swatch.id;
-                        return (
-                          <button
-                            key={swatch.id}
-                            type="button"
-                            onClick={() => setThemeColor(swatch)}
-                            title={swatch.name}
-                            className={`relative w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden shrink-0 transition-all cursor-pointer border border-black/10 shadow-2xs ${
-                              isSelected
-                                ? 'ring-2 ring-[#18191c] ring-offset-2 ring-offset-[#f5f5f7] scale-105'
-                                : 'hover:scale-110 opacity-90 hover:opacity-100'
-                            }`}
-                            style={{ backgroundColor: swatch.cardBg }}
-                          >
-                            <div
-                              className="absolute bottom-0 right-0 w-[55%] h-[55%] rounded-tl-[9px]"
-                              style={{ backgroundColor: swatch.hex }}
-                            />
-                          </button>
-                        );
-                      })}
-                    </div>
+                {/* Client Countries Selector Button */}
+                <button
+                  type="button"
+                  onClick={() => setIsCountryModalOpen(true)}
+                  className="flex items-center gap-1.5 bg-white hover:bg-[#f5f5f7] border border-[#e0e0e0] hover:border-[#b0b0b5] rounded-full px-2.5 sm:px-3 py-1.5 transition-all shadow-2xs cursor-pointer group text-xs shrink-0"
+                  title="Select client countries"
+                >
+                  <Globe className="w-3.5 h-3.5 text-[#10b981] shrink-0" />
+                  <div className="flex items-center gap-1 text-xs">
+                    <span className="text-[#6e6e73]">Countries:</span>
+                    <span className="text-[#1d1d1f] font-semibold">
+                      {selectedCountries.length}/195
+                    </span>
                   </div>
-
-                  {/* Map Controls */}
-                  {activeTab !== 'skill-map' && (
-                    <div className="flex items-center">
-                      {/* Country Names Checkbox */}
-                      <label className="flex items-center gap-1.5 text-xs text-[#1d1d1f] cursor-pointer select-none bg-[#f5f5f7] px-3 py-1.5 rounded-full border border-[#e0e0e0] hover:bg-[#ebebed] transition-colors">
-                        <input
-                          type="checkbox"
-                          checked={showLabels}
-                          onChange={e => setShowLabels(e.target.checked)}
-                          className="rounded border-[#d1d1d6] bg-white text-[#10b981] focus:ring-0 cursor-pointer"
-                        />
-                        <span className="font-medium text-[#515154]">Country Labels</span>
-                      </label>
-                    </div>
-                  )}
-                </div>
+                  <ChevronRight className="w-3 h-3 text-[#86868b] group-hover:translate-x-0.5 transition-transform" />
+                </button>
               </div>
             </div>
 
-            {/* Quick Switch to Country Picker for Mobile Users */}
-            <div className="lg:hidden flex items-center justify-between px-3 py-2 bg-white rounded-xl border border-[#e0e0e0] text-xs shadow-2xs">
-              <span className="text-[#6e6e73]">
-                <strong className="text-[#1d1d1f]">{selectedCountries.length}</strong> countries selected
-              </span>
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileTab('editor');
-                  studioRef.current?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="font-semibold text-xs flex items-center gap-1 hover:underline cursor-pointer"
-                style={{ color: themeColor.hex }}
-              >
-                <span>Edit Countries & Work</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
+            {/* Row 2: Theme Swatches + Map Controls */}
+            <div className="flex flex-wrap items-center justify-between gap-2.5 pt-0.5">
+              {/* Theme Selector (5 swatches) */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-[#86868b]">Theme:</span>
+                <div className="flex items-center gap-2 bg-[#f5f5f7] px-2.5 sm:px-3 py-1 rounded-full border border-[#e0e0e0]">
+                  {COLOR_SWATCHES.map(swatch => {
+                    const isSelected = themeColor.id === swatch.id;
+                    return (
+                      <button
+                        key={swatch.id}
+                        type="button"
+                        onClick={() => setThemeColor(swatch)}
+                        title={swatch.name}
+                        className={`relative w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden shrink-0 transition-all cursor-pointer border border-black/10 shadow-2xs ${
+                          isSelected
+                            ? 'ring-2 ring-[#18191c] ring-offset-2 ring-offset-[#f5f5f7] scale-105'
+                            : 'hover:scale-110 opacity-90 hover:opacity-100'
+                        }`}
+                        style={{ backgroundColor: swatch.cardBg }}
+                      >
+                        <div
+                          className="absolute bottom-0 right-0 w-[55%] h-[55%] rounded-tl-[9px]"
+                          style={{ backgroundColor: swatch.hex }}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
-            {/* The Main Stage: Exportable Luxury Map Canvas Card (Screenshot Style) */}
-            <div className="w-full">
-              <ExportCanvas
-                ref={canvasRef}
-                activeTab={activeTab}
-                userName={userName}
-                userTitle={userTitle}
-                avatarUrl={avatarUrl}
-                themeColor={themeColor}
-                selectedCountries={selectedCountries}
-                homeCountry={homeCountry}
-                skills={skills}
-                onToggleCountry={handleToggleCountry}
-                aspectRatio={aspectRatio}
-                showLabels={showLabels}
-                countryNamesMap={countryNamesMap}
-                isAnimated={isAnimated}
-              />
-            </div>
+              {/* Map Controls */}
+              <div className="flex items-center gap-2">
+                <label className="flex items-center gap-1.5 text-xs text-[#1d1d1f] cursor-pointer select-none bg-[#f5f5f7] px-3 py-1.5 rounded-full border border-[#e0e0e0] hover:bg-[#ebebed] transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={showLabels}
+                    onChange={e => setShowLabels(e.target.checked)}
+                    className="rounded border-[#d1d1d6] bg-white text-[#10b981] focus:ring-0 cursor-pointer"
+                  />
+                  <span className="font-medium text-[#515154]">Country Labels</span>
+                </label>
 
-            {/* Export & Download Bar (2 sizes: 4:5, 1:1 & 2 formats: JPG, PNG) */}
-            <ExportBar
+                {selectedCountries.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleClearCountries}
+                    className="text-xs text-[#86868b] hover:text-rose-600 px-2 py-1 rounded-full transition-colors cursor-pointer"
+                    title="Clear all selected countries"
+                  >
+                    Reset Map
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* The Main Stage: Exportable Luxury Map Canvas Card (Screenshot Style) */}
+          <div className="w-full">
+            <ExportCanvas
+              ref={canvasRef}
               activeTab={activeTab}
-              aspectRatio={aspectRatio}
-              setAspectRatio={setAspectRatio}
-              onExport={handleExport}
-              onCopyClipboard={handleCopyClipboard}
-              isExporting={isExporting}
-              copiedSuccess={copiedSuccess}
+              userName={userName}
+              userTitle={userTitle}
+              avatarUrl={avatarUrl}
               themeColor={themeColor}
+              selectedCountries={selectedCountries}
+              homeCountry={homeCountry}
+              skills={skills}
+              onToggleCountry={handleToggleCountry}
+              aspectRatio={aspectRatio}
+              showLabels={showLabels}
+              countryNamesMap={countryNamesMap}
               isAnimated={isAnimated}
             />
+          </div>
 
-            {/* Helpful Quick Tip & Privacy Guarantee */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 py-1 text-center">
-              <p className="text-xs text-[#86868b] flex items-center justify-center gap-1.5">
-                <Lightbulb className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                <span>
-                  <span className="text-[#1d1d1f] font-medium">Tip:</span> Select your place of work or country if you only work there.
-                </span>
-              </p>
-              <span className="hidden sm:inline text-[#d1d1d6]">•</span>
-              <p className="text-xs text-[#0f7af0] flex items-center justify-center gap-1.5 font-medium">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#0f7af0] shrink-0" />
-                <span>100% Private · Stored only in your local browser</span>
-              </p>
-            </div>
+          {/* Export & Download Bar (2 sizes: 4:5, 1:1 & 2 formats: JPG, PNG) */}
+          <ExportBar
+            activeTab={activeTab}
+            aspectRatio={aspectRatio}
+            setAspectRatio={setAspectRatio}
+            onExport={handleExport}
+            onCopyClipboard={handleCopyClipboard}
+            isExporting={isExporting}
+            copiedSuccess={copiedSuccess}
+            themeColor={themeColor}
+            isAnimated={isAnimated}
+          />
+
+          {/* Helpful Quick Tip & Privacy Guarantee */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 py-1 text-center">
+            <p className="text-xs text-[#86868b] flex items-center justify-center gap-1.5">
+              <Lightbulb className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <span>
+                <span className="text-[#1d1d1f] font-medium">Tip:</span> Click any country on the map or use the Countries button to add clients.
+              </span>
+            </p>
+            <span className="hidden sm:inline text-[#d1d1d6]">•</span>
+            <p className="text-xs text-[#0f7af0] flex items-center justify-center gap-1.5 font-medium">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#0f7af0] shrink-0" />
+              <span>100% Private · Stored only in your local browser</span>
+            </p>
           </div>
         </div>
       </section>
@@ -835,7 +735,30 @@ export default function App() {
         </div>
       </div>
 
-      {/* 5. LOCATION MODAL (WHERE ARE YOU WORKING FROM?) */}
+      {/* 5. WORK & SERVICES SELECTION MODAL */}
+      <WorkSelectionModal
+        isOpen={isWorkModalOpen}
+        onClose={() => setIsWorkModalOpen(false)}
+        skills={skills}
+        onToggleSkill={handleToggleSkill}
+        onAddCustomSkill={handleAddCustomSkill}
+        onRemoveSkill={handleRemoveSkill}
+        onClearSkills={handleClearSkills}
+        themeColor={themeColor}
+      />
+
+      {/* 6. CLIENT COUNTRY SELECTION MODAL */}
+      <CountrySelectionModal
+        isOpen={isCountryModalOpen}
+        onClose={() => setIsCountryModalOpen(false)}
+        selectedCountries={selectedCountries}
+        homeCountry={homeCountry}
+        onToggleCountry={handleToggleCountry}
+        onClearCountries={handleClearCountries}
+        themeColor={themeColor}
+      />
+
+      {/* 7. LOCATION MODAL (WHERE ARE YOU WORKING FROM?) */}
       <LocationModal
         isOpen={isLocationModalOpen}
         onClose={() => setIsLocationModalOpen(false)}
@@ -844,7 +767,7 @@ export default function App() {
         themeColor={themeColor}
       />
 
-      {/* 6. PRIVACY POLICY MODAL */}
+      {/* 8. PRIVACY POLICY MODAL */}
       <PrivacyPolicyModal
         isOpen={isPrivacyModalOpen}
         onClose={() => setIsPrivacyModalOpen(false)}
