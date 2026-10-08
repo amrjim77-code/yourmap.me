@@ -80,6 +80,39 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   '586': '🇵🇰', // Pakistan
   '050': '🇧🇩', // Bangladesh
   '144': '🇱🇰', // Sri Lanka
+  '462': '🇲🇻', // Maldives
+  '048': '🇧🇭', // Bahrain
+  '470': '🇲🇹', // Malta
+  '480': '🇲🇺', // Mauritius
+  '690': '🇸🇨', // Seychelles
+  '052': '🇧🇧', // Barbados
+  '132': '🇨🇻', // Cabo Verde
+  '174': '🇰🇲', // Comoros
+  '678': '🇸🇹', // Sao Tome and Principe
+  '492': '🇲🇨', // Monaco
+  '020': '🇦🇩', // Andorra
+  '438': '🇱🇮', // Liechtenstein
+  '674': '🇸🇲', // San Marino
+  '336': '🇻🇦', // Vatican City
+  '028': '🇦🇬', // Antigua and Barbuda
+  '212': '🇩🇲', // Dominica
+  '308': '🇬🇩', // Grenada
+  '659': '🇰🇳', // Saint Kitts and Nevis
+  '662': '🇱🇨', // Saint Lucia
+  '670': '🇻🇨', // Saint Vincent and the Grenadines
+  '585': '🇵🇼', // Palau
+  '583': '🇫🇲', // Micronesia
+  '584': '🇲🇭', // Marshall Islands
+  '296': '🇰🇮', // Kiribati
+  '520': '🇳🇷', // Nauru
+  '798': '🇹🇻', // Tuvalu
+  '882': '🇼🇸', // Samoa
+  '776': '🇹🇴', // Tonga
+  '383': '🇽🇰', // Kosovo
+  '344': '🇭🇰', // Hong Kong
+  '446': '🇲🇴', // Macao
+  '060': '🇧🇲', // Bermuda
+  '136': '🇰🇾', // Cayman Islands
   '524': '🇳🇵', // Nepal
   '634': '🇶🇦', // Qatar
   '414': '🇰🇼', // Kuwait
@@ -105,7 +138,9 @@ export const CONTINENT_MAP: Record<string, ContinentName> = {
   '858': 'Americas', '862': 'Americas', '188': 'Americas', '591': 'Americas', '320': 'Americas',
   '340': 'Americas', '222': 'Americas', '084': 'Americas', '192': 'Americas', '214': 'Americas',
   '332': 'Americas', '388': 'Americas', '780': 'Americas', '044': 'Americas', '328': 'Americas',
-  '740': 'Americas', '238': 'Americas', '630': 'Americas', '304': 'Americas',
+  '740': 'Americas', '238': 'Americas', '630': 'Americas', '304': 'Americas', '052': 'Americas',
+  '028': 'Americas', '212': 'Americas', '308': 'Americas', '659': 'Americas', '662': 'Americas',
+  '670': 'Americas', '060': 'Americas', '136': 'Americas',
 
   // Europe
   '826': 'Europe', '276': 'Europe', '250': 'Europe', '528': 'Europe', '756': 'Europe',
@@ -115,7 +150,9 @@ export const CONTINENT_MAP: Record<string, ContinentName> = {
   '804': 'Europe', '643': 'Europe', '112': 'Europe', '100': 'Europe', '191': 'Europe',
   '703': 'Europe', '705': 'Europe', '440': 'Europe', '428': 'Europe', '233': 'Europe',
   '352': 'Europe', '442': 'Europe', '498': 'Europe', '499': 'Europe', '688': 'Europe',
-  '008': 'Europe', '070': 'Europe', '807': 'Europe', '196': 'Europe',
+  '008': 'Europe', '070': 'Europe', '807': 'Europe', '196': 'Europe', '470': 'Europe',
+  '492': 'Europe', '020': 'Europe', '438': 'Europe', '674': 'Europe', '336': 'Europe',
+  '383': 'Europe', '-97': 'Europe',
 
   // Asia
   '392': 'Asia', '702': 'Asia', '410': 'Asia', '356': 'Asia', '156': 'Asia',
@@ -126,11 +163,14 @@ export const CONTINENT_MAP: Record<string, ContinentName> = {
   '860': 'Asia', '762': 'Asia', '417': 'Asia', '795': 'Asia', '051': 'Asia',
   '031': 'Asia', '268': 'Asia', '496': 'Asia', '104': 'Asia', '408': 'Asia',
   '116': 'Asia', '418': 'Asia', '422': 'Asia', '760': 'Asia', '887': 'Asia',
-  '064': 'Asia', '096': 'Asia', '158': 'Asia', '626': 'Asia',
+  '064': 'Asia', '096': 'Asia', '158': 'Asia', '626': 'Asia', '462': 'Asia',
+  '048': 'Asia', '344': 'Asia', '446': 'Asia',
 
   // Oceania
   '036': 'Oceania', '554': 'Oceania', '242': 'Oceania', '598': 'Oceania', '090': 'Oceania',
-  '548': 'Oceania', '540': 'Oceania', '010': 'Oceania',
+  '548': 'Oceania', '540': 'Oceania', '010': 'Oceania', '585': 'Oceania', '583': 'Oceania',
+  '584': 'Oceania', '296': 'Oceania', '520': 'Oceania', '798': 'Oceania', '882': 'Oceania',
+  '776': 'Oceania',
 
   // Africa (defaults & key mapped)
   '710': 'Africa', '566': 'Africa', '404': 'Africa', '818': 'Africa', '504': 'Africa',
@@ -142,6 +182,7 @@ export const CONTINENT_MAP: Record<string, ContinentName> = {
   '266': 'Africa', '270': 'Africa', '324': 'Africa', '430': 'Africa', '434': 'Africa',
   '466': 'Africa', '480': 'Africa', '562': 'Africa', '624': 'Africa', '646': 'Africa',
   '678': 'Africa', '732': 'Africa', '748': 'Africa', '894': 'Africa', '716': 'Africa',
+  '690': 'Africa', '132': 'Africa', '174': 'Africa', '-96': 'Africa',
 };
 
 export const getCountryContinent = (id: string): ContinentName => {

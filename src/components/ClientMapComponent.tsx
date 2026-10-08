@@ -30,9 +30,17 @@ const LABEL_OFFSETS: Record<string, { dx: number; dy: number; hasLeader?: boolea
   '156': { dx: 6, dy: -12 },                  // China: spacious placement above south/east asia
   '050': { dx: 0, dy: -12 },                  // Bangladesh: distinct upward position above pin
   '356': { dx: -12, dy: 14 },                 // India: southwest into southern peninsula, avoiding Bangladesh
+  '144': { dx: 14, dy: 6, hasLeader: true },  // Sri Lanka: southeast off coast
+  '462': { dx: -20, dy: 14, hasLeader: true }, // Maldives: southwest into Indian Ocean with clean leader line
   '764': { dx: 18, dy: 4 },                   // Thailand: eastward into Indochina
   '458': { dx: 26, dy: -2 },                  // Malaysia: eastward across South China Sea
   '702': { dx: 18, dy: 14, hasLeader: true }, // Singapore: southeast with clean leader line
+  '048': { dx: 16, dy: -8, hasLeader: true },  // Bahrain: Persian Gulf with leader
+  '470': { dx: 14, dy: 10, hasLeader: true }, // Malta: central Mediterranean with leader
+  '480': { dx: 18, dy: 8, hasLeader: true },  // Mauritius: Indian Ocean
+  '690': { dx: -18, dy: -8, hasLeader: true }, // Seychelles: Indian Ocean
+  '052': { dx: 16, dy: 6, hasLeader: true },  // Barbados: Caribbean
+  '132': { dx: -18, dy: -6, hasLeader: true }, // Cabo Verde: Atlantic
   '682': { dx: -4, dy: -4 },                  // Saudi Arabia: central Arabian peninsula
   '392': { dx: 18, dy: -2 },                  // Japan: off coast to the right
   '840': { dx: 0, dy: 0 },                    // United States: centered
@@ -44,6 +52,49 @@ const LABEL_OFFSETS: Record<string, { dx: number; dy: number; hasLeader?: boolea
   '036': { dx: 0, dy: 6 },                    // Australia: centered
   '784': { dx: 14, dy: 8, hasLeader: true },  // UAE: with leader line
 };
+
+interface IslandMicrostate {
+  id: string;
+  name: string;
+  coords: [number, number];
+}
+
+// Sovereign island nations and microstates rendered as interactive geographic nodes
+const ISLAND_MICROSTATES: IslandMicrostate[] = [
+  { id: '462', name: 'Maldives', coords: [73.5093, 4.1755] },
+  { id: '702', name: 'Singapore', coords: [103.8198, 1.3521] },
+  { id: '048', name: 'Bahrain', coords: [50.5577, 26.0667] },
+  { id: '470', name: 'Malta', coords: [14.3754, 35.9375] },
+  { id: '480', name: 'Mauritius', coords: [57.5522, -20.3484] },
+  { id: '690', name: 'Seychelles', coords: [55.4920, -4.6796] },
+  { id: '052', name: 'Barbados', coords: [-59.5432, 13.1939] },
+  { id: '132', name: 'Cabo Verde', coords: [-24.0132, 16.5388] },
+  { id: '174', name: 'Comoros', coords: [43.3333, -11.6455] },
+  { id: '678', name: 'Sao Tome and Principe', coords: [6.6131, 0.1864] },
+  { id: '492', name: 'Monaco', coords: [7.4246, 43.7384] },
+  { id: '020', name: 'Andorra', coords: [1.5218, 42.5063] },
+  { id: '438', name: 'Liechtenstein', coords: [9.5554, 47.1660] },
+  { id: '674', name: 'San Marino', coords: [12.4578, 43.9424] },
+  { id: '336', name: 'Vatican City', coords: [12.4534, 41.9029] },
+  { id: '028', name: 'Antigua and Barbuda', coords: [-61.8456, 17.0608] },
+  { id: '212', name: 'Dominica', coords: [-61.3710, 15.4150] },
+  { id: '308', name: 'Grenada', coords: [-61.6790, 12.1165] },
+  { id: '659', name: 'Saint Kitts and Nevis', coords: [-62.7830, 17.3578] },
+  { id: '662', name: 'Saint Lucia', coords: [-60.9789, 13.9094] },
+  { id: '670', name: 'Saint Vincent and the Grenadines', coords: [-61.2872, 13.2528] },
+  { id: '585', name: 'Palau', coords: [134.5825, 7.5150] },
+  { id: '583', name: 'Micronesia', coords: [158.1560, 6.8874] },
+  { id: '584', name: 'Marshall Islands', coords: [171.1845, 7.1315] },
+  { id: '296', name: 'Kiribati', coords: [172.9717, 1.3382] },
+  { id: '520', name: 'Nauru', coords: [166.9315, -0.5228] },
+  { id: '798', name: 'Tuvalu', coords: [179.1940, -8.5167] },
+  { id: '882', name: 'Samoa', coords: [-172.1046, -13.7590] },
+  { id: '776', name: 'Tonga', coords: [-175.1982, -21.1789] },
+  { id: '344', name: 'Hong Kong', coords: [114.1694, 22.3193] },
+  { id: '446', name: 'Macao', coords: [113.5439, 22.1987] },
+  { id: '060', name: 'Bermuda', coords: [-64.7574, 32.3078] },
+  { id: '136', name: 'Cayman Islands', coords: [-81.2546, 19.3133] },
+];
 
 /**
  * Animated Flight Paths and Traveling Photon Particles
@@ -306,18 +357,70 @@ export const ClientMapComponent: React.FC<ClientMapComponentProps> = memo(({
             />
           )}
 
-          {/* Singapore Pin Dot (Microstate at [103.82, 1.35]) */}
-          {selectedSet.has('702') && (
-            <Marker coordinates={[103.82, 1.35]}>
-              <circle
-                r={2.8}
-                fill={themeColor.hex}
-                stroke="#ffffff"
-                strokeWidth={1}
-                style={{ filter: `drop-shadow(0 0 4px ${themeColor.hex})` }}
-              />
-            </Marker>
-          )}
+          {/* Interactive Island Nations & Microstates (Maldives, Singapore, Bahrain, Malta, etc.) */}
+          {ISLAND_MICROSTATES.map(island => {
+            const isSelected = selectedSet.has(island.id);
+            const isHovered = hoveredCountry?.id === island.id;
+
+            const islandFill = isSelected
+              ? themeColor.hex
+              : isHovered
+              ? themeColor.landHover
+              : themeColor.landDefault;
+
+            const islandStroke = isSelected
+              ? '#ffffff'
+              : isHovered
+              ? themeColor.hex
+              : themeColor.landStroke;
+
+            return (
+              <Marker
+                key={`microstate-${island.id}`}
+                coordinates={island.coords}
+              >
+                <g
+                  className="cursor-pointer"
+                  onClick={() => onToggleCountry?.(island.id, island.name)}
+                  onMouseEnter={() => setHoveredCountry({ id: island.id, name: island.name })}
+                  onMouseLeave={() => setHoveredCountry(null)}
+                >
+                  {/* Invisible generous hit target (12px radius) for effortless click & touch */}
+                  <circle r={12} fill="transparent" />
+
+                  {/* Selected Outer Glow Aura */}
+                  {isSelected && (
+                    <circle
+                      r={6}
+                      fill={themeColor.hex}
+                      opacity={0.5}
+                      filter="url(#country-glow)"
+                    />
+                  )}
+
+                  {/* Primary Island Geographic Dot */}
+                  <circle
+                    r={isSelected ? 3.4 : 2.5}
+                    fill={islandFill}
+                    stroke={islandStroke}
+                    strokeWidth={isSelected ? 1.2 : 0.8}
+                    style={{
+                      transition: 'fill 0.25s ease, stroke 0.25s ease, r 0.25s ease',
+                      filter: isSelected ? 'url(#country-glow)' : 'none',
+                    }}
+                  />
+
+                  {/* Center crisp white accent when selected */}
+                  {isSelected && (
+                    <circle
+                      r={1.5}
+                      fill="#ffffff"
+                    />
+                  )}
+                </g>
+              </Marker>
+            );
+          })}
 
           {/* Country Centroid Nodes & English Labels */}
           {allActiveCountries.map((id, idx) => {
