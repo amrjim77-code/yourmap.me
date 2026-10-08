@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Search, Globe, X, Check, Trash2 } from 'lucide-react';
 import { ColorSwatch } from '../data/palette';
-import { CONTINENT_LIST, ContinentName, getCountryContinent, getCountryFlag } from '../data/countries';
+import { CONTINENT_LIST, ContinentName, getCountryContinent } from '../data/countries';
 import countryListData from '../data/countryList.json';
 
 interface CountrySelectionModalProps {
@@ -170,8 +170,6 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {filteredCountries.map(country => {
               const isSelected = selectedSet.has(country.id);
-              const isHome = country.id === homeCountry;
-              const flag = getCountryFlag(country.id);
 
               return (
                 <button
@@ -188,10 +186,7 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
                     borderColor: themeColor.hex,
                   } : undefined}
                 >
-                  <span className="flex items-center gap-1.5 truncate">
-                    <span className="text-sm shrink-0">{flag}</span>
-                    <span className="truncate">{country.name}</span>
-                  </span>
+                  <span className="truncate font-medium">{country.name}</span>
                   {isSelected && <Check className="w-3.5 h-3.5 shrink-0" />}
                 </button>
               );

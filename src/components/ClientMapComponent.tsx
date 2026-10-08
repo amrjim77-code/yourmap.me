@@ -522,7 +522,7 @@ export const ClientMapComponent: React.FC<ClientMapComponentProps> = memo(({
                       pointerEvents: 'none',
                     }}
                   >
-                    {displayName}{isHome ? ' ★' : ''}
+                    {displayName}
                   </text>
                 )}
               </Marker>

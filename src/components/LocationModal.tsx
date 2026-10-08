@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Search, MapPin, X, Check, Globe } from 'lucide-react';
 import { ColorSwatch } from '../data/palette';
-import { CONTINENT_LIST, ContinentName, getCountryContinent, getCountryFlag } from '../data/countries';
+import { CONTINENT_LIST, ContinentName, getCountryContinent } from '../data/countries';
 import countryListData from '../data/countryList.json';
 
 interface LocationModalProps {
@@ -165,7 +165,6 @@ export const LocationModal: React.FC<LocationModalProps> = ({
                         borderColor: isCurrent ? themeColor.hex : undefined,
                       }}
                     >
-                      <span>{getCountryFlag(hub.id)}</span>
                       <span>{hub.name}</span>
                       {isCurrent && <Check className="w-3 h-3 ml-0.5" />}
                     </button>
